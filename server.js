@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const { seedDatabase, wipeAndReseed } = require("./utils/seed");
 
-// Import routes
+/*
+Importering av routes. 
+*/
 const authRoutes = require("./routes/auth");
 const courseRoutes = require("./routes/products");
 const orderRoutes = require("./routes/orders");
@@ -12,13 +14,17 @@ const analyticsRoutes = require("./routes/analytics");
 
 const app = express();
 
-// Middleware
+/*
+Middleware. 
+*/
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/analytics", analyticsRoutes);
 
-// MongoDB Connection
+/*
+MongoDB Connection.
+*/
 mongoose
   .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/core-academy")
   .then(async () => {
@@ -27,18 +33,23 @@ mongoose
   })
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// Basic route
+/*
+Enkel route. 
+*/
 app.get("/api/", (req, res) => {
   res.json({ message: "Welcome to Core Academy API" });
 });
 
-// Routes
+/*
+Routes. 
+*/
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/orders", orderRoutes);
 
-// Wipe all data and reseed
-//TODO: add administator access
+/*
+Radera data från databasen. 
+*/
 app.post("/api/wipe", async (req, res) => {
   try {
     const result = await wipeAndReseed();
@@ -51,7 +62,9 @@ app.post("/api/wipe", async (req, res) => {
   }
 });
 
-// Start server
+/*
+Starta servern. 
+*/
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

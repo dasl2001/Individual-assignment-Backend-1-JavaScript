@@ -3,7 +3,9 @@ const router = express.Router();
 const Product = require("../models/Product");
 const auth = require("../middleware/auth");
 
-// Get all products
+/*
+Se alla produkter. 
+*/
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find();
@@ -13,7 +15,9 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get single product
+/*
+Se en viss produkt med id. 
+*/
 router.get("/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -24,7 +28,9 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Create product (admin only ideally)
+/*
+Skapa produkt (bara för admin). 
+*/
 router.post("/", auth, async (req, res) => {
   try {
     const product = new Product(req.body);
@@ -35,7 +41,9 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
-// Update product
+/*
+Uppdatera produkter. 
+*/
 router.put("/:id", auth, async (req, res) => {
   try {
     const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -46,7 +54,9 @@ router.put("/:id", auth, async (req, res) => {
   }
 });
 
-// Delete product
+/*
+Radera produkter. 
+*/
 router.delete("/:id", auth, async (req, res) => {
   try {
     const deleted = await Product.findByIdAndDelete(req.params.id);
@@ -57,4 +67,7 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
+/*
+Exportering. 
+*/
 module.exports = router;

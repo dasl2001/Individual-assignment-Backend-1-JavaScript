@@ -4,7 +4,9 @@ const Order = require("../models/Order");
 const Product = require("../models/Product");
 const auth = require("../middleware/auth");
 
-// Get all orders
+/*
+Se alla orders.
+*/
 router.get("/", auth, async (req, res) => {
   try {
     const orders = await Order.find().populate("products.product", "name price");
@@ -14,7 +16,9 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-// Get current user's orders
+/*
+Se användarens nuvarnde order. 
+*/
 router.get("/my-orders", auth, async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user.userId }).populate("products.product", "name price");
@@ -24,12 +28,12 @@ router.get("/my-orders", auth, async (req, res) => {
   }
 });
 
-// Create new order
+/*
+Skapa ny order. 
+*/
 router.post("/", auth, async (req, res) => {
   try {
     const { products, paymentMethod } = req.body;
-
-    // Exempel: products = [{ product: "productId", quantity: 2 }]
     const productDocs = await Promise.all(products.map(async ({ product, quantity }) => {
       const found = await Product.findById(product);
       return found ? found.price * quantity : 0;
@@ -47,6 +51,9 @@ router.post("/", auth, async (req, res) => {
       purchasedAt: new Date(),
     });
 
+/*
+Status meddelande. 
+*/
     await order.save();
     res.status(201).json(order);
   } catch (error) {
@@ -54,5 +61,8 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
+/*
+Exporerar filen. 
+*/
 module.exports = router;
 

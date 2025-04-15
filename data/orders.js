@@ -1,3 +1,7 @@
+/*
+Simulerad beställningsdata.
+*/
+
 const orders = [
   {
     _id: "67ed981187368c7bb51b1c00",
