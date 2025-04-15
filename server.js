@@ -6,8 +6,9 @@ const { seedDatabase, wipeAndReseed } = require("./utils/seed");
 
 // Import routes
 const authRoutes = require("./routes/auth");
-const courseRoutes = require("./routes/courses");
+const courseRoutes = require("./routes/products");
 const orderRoutes = require("./routes/orders");
+const analyticsRoutes = require("./routes/analytics");
 
 const app = express();
 
@@ -15,6 +16,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/api/analytics", analyticsRoutes);
 
 // MongoDB Connection
 mongoose

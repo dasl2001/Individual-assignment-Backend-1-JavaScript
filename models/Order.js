@@ -1,60 +1,30 @@
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  courses: [
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  products: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
-      required: true,
-    },
+      product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+      quantity: { type: Number, default: 1 }
+    }
   ],
-  status: {
-    type: String,
-    enum: ["pending", "completed", "cancelled"],
-    default: "pending",
-  },
-  paymentMethod: {
-    type: String,
-    required: true,
-  },
-  paymentStatus: {
-    type: String,
-    enum: ["pending", "completed", "failed"],
-    default: "pending",
-  },
-  purchasedAt: {
-    type: Date,
-    default: Date.now,
-  },
-  completedAt: {
-    type: Date,
-  },
-  cancelledAt: {
-    type: Date,
-  },
-  notes: {
-    type: String,
-    trim: true,
-  },
+  totalPrice: { type: Number, required: true },
+  status: { type: String, enum: ["pending", "completed", "cancelled"], default: "pending" },
+  paymentMethod: { type: String, required: true },
+  paymentStatus: { type: String, enum: ["pending", "completed", "failed"], default: "pending" },
+  purchasedAt: { type: Date, default: Date.now },
+  completedAt: { type: Date },
+  cancelledAt: { type: Date },
+  notes: { type: String, trim: true }
 });
 
-// Update status timestamps
 orderSchema.pre("save", function (next) {
   if (this.isModified("status")) {
-    if (this.status === "completed") {
-      this.completedAt = Date.now();
-    } else if (this.status === "cancelled") {
-      this.cancelledAt = Date.now();
-    }
+    if (this.status === "completed") this.completedAt = Date.now();
+    else if (this.status === "cancelled") this.cancelledAt = Date.now();
   }
   next();
 });
 
-const Order = mongoose.model("Order", orderSchema);
+module.exports = mongoose.model("Order", orderSchema);
 
-module.exports = Order;

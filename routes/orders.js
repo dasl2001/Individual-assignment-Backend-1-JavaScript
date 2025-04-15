@@ -1,54 +1,45 @@
 const express = require("express");
 const router = express.Router();
 const Order = require("../models/Order");
-const Course = require("../models/Course");
+const Product = require("../models/Product");
 const auth = require("../middleware/auth");
 
 // Get all orders
 router.get("/", auth, async (req, res) => {
   try {
-    const orders = await Order.find()
-      .populate("courses", "title price");
+    const orders = await Order.find().populate("products.product", "name price");
     res.json(orders);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching orders", error: error.message });
+    res.status(500).json({ message: "Error fetching orders", error: error.message });
   }
 });
 
-// Get user's orders
+// Get current user's orders
 router.get("/my-orders", auth, async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user.userId }).populate(
-      "courses",
-      "title price"
-    );
+    const orders = await Order.find({ user: req.user.userId }).populate("products.product", "name price");
     res.json(orders);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching user orders", error: error.message });
+    res.status(500).json({ message: "Error fetching user orders", error: error.message });
   }
 });
 
 // Create new order
 router.post("/", auth, async (req, res) => {
   try {
-    const { courses, paymentMethod } = req.body;
+    const { products, paymentMethod } = req.body;
 
-    // Calculate total price
-    const coursePrices = await Promise.all(
-      courses.map(async (courseId) => {
-        const course = await Course.findById(courseId);
-        return course.price;
-      })
-    );
-    const totalPrice = coursePrices.reduce((sum, price) => sum + price, 0);
+    // Exempel: products = [{ product: "productId", quantity: 2 }]
+    const productDocs = await Promise.all(products.map(async ({ product, quantity }) => {
+      const found = await Product.findById(product);
+      return found ? found.price * quantity : 0;
+    }));
+
+    const totalPrice = productDocs.reduce((sum, price) => sum + price, 0);
 
     const order = new Order({
       user: req.user.userId,
-      courses,
+      products,
       totalPrice,
       status: "pending",
       paymentMethod,
@@ -59,10 +50,9 @@ router.post("/", auth, async (req, res) => {
     await order.save();
     res.status(201).json(order);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error creating order", error: error.message });
+    res.status(500).json({ message: "Error creating order", error: error.message });
   }
 });
 
 module.exports = router;
+
