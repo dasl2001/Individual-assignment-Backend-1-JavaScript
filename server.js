@@ -5,50 +5,39 @@ const cors = require("cors");
 const { seedDatabase, wipeAndReseed } = require("./utils/seed");
 
 /*
-Importering av routes. 
+  Import av Routes
 */
 const authRoutes = require("./routes/auth");
-const courseRoutes = require("./routes/products");
+const productRoutes = require("./routes/products"); 
 const orderRoutes = require("./routes/orders");
 const analyticsRoutes = require("./routes/analytics");
 
 const app = express();
 
 /*
-Middleware. 
+  Middleware
 */
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api/analytics", analyticsRoutes);
 
 /*
-MongoDB Connection.
+  API Endpoints
 */
-mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/core-academy")
-  .then(async () => {
-    console.log("Connected to MongoDB");
-    await seedDatabase();
-  })
-  .catch((err) => console.error("MongoDB connection error:", err));
+app.use("/api/auth", authRoutes);              
+app.use("/api/products", productRoutes);       
+app.use("/api/orders", orderRoutes);           
+app.use("/api/analytics", analyticsRoutes);    
 
 /*
-Enkel route. 
+  Root Route
 */
 app.get("/api/", (req, res) => {
-  res.json({ message: "Welcome to Core Academy API" });
+  res.json({ message: "Welcome to Hakim Livs" });
 });
 
 /*
-Routes. 
-*/
-app.use("/api/auth", authRoutes);
-app.use("/api/courses", courseRoutes);
-app.use("/api/orders", orderRoutes);
-
-/*
-Radera data från databasen. 
+  Admin Wipe och seed
 */
 app.post("/api/wipe", async (req, res) => {
   try {
@@ -63,9 +52,18 @@ app.post("/api/wipe", async (req, res) => {
 });
 
 /*
-Starta servern. 
+  MongoDB Connection & Start
 */
+mongoose
+  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/core-academy")
+  .then(async () => {
+    console.log("Connected to MongoDB");
+    await seedDatabase();
+  })
+  .catch((err) => console.error("MongoDB connection error:", err));
+
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
