@@ -3,42 +3,21 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const { seedDatabase, wipeAndReseed } = require("./utils/seed");
-
-/*
-  Import av Routes
-*/
 const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/products"); 
 const orderRoutes = require("./routes/orders");
 const analyticsRoutes = require("./routes/analytics");
-
 const app = express();
-
-/*
-  Middleware
-*/
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-/*
-  API Endpoints
-*/
 app.use("/api/auth", authRoutes);              
 app.use("/api/products", productRoutes);       
 app.use("/api/orders", orderRoutes);           
 app.use("/api/analytics", analyticsRoutes);    
-
-/*
-  Root Route
-*/
 app.get("/api/", (req, res) => {
   res.json({ message: "Welcome to Hakim Livs" });
 });
-
-/*
-  Admin Wipe och seed
-*/
 app.post("/api/wipe", async (req, res) => {
   try {
     const result = await wipeAndReseed();
@@ -50,10 +29,6 @@ app.post("/api/wipe", async (req, res) => {
     res.status(500).json({ error: "Failed to wipe and reseed database" });
   }
 });
-
-/*
-  MongoDB Connection & Start
-*/
 mongoose
   .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/core-academy")
   .then(async () => {
@@ -61,7 +36,6 @@ mongoose
     await seedDatabase();
   })
   .catch((err) => console.error("MongoDB connection error:", err));
-
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
