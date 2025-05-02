@@ -1,13 +1,6 @@
-/*
- Importering av moduler.
-*/
 const users = require("./users");
 const products = require("./products");
 const { faker } = require("@faker-js/faker");
-
-/*
-Skapar datum.
-*/
 const generateDates = (completed = false, cancelled = false) => {
   const today = new Date();
   const lastYear = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
@@ -29,10 +22,6 @@ const generateDates = (completed = false, cancelled = false) => {
   }) : null;
   return { purchasedAt, completedAt, cancelledAt };
 };
-
-/*
-Skapar ordrar.
-*/
 const generateOrders = () => {
   const orders = [
     {
@@ -48,7 +37,6 @@ const generateOrders = () => {
       totalPrice: (2 * products[0].price) + (1 * products[3].price),
       ...generateDates(true),
     },
-
     {
       user: users[1]._id,
       products: [
@@ -61,7 +49,6 @@ const generateOrders = () => {
       totalPrice: 1 * products[1].price,
       ...generateDates(),
     },
-
     {
       user: users[2]._id,
       products: [
@@ -74,7 +61,6 @@ const generateOrders = () => {
       totalPrice: 3 * products[2].price,
       ...generateDates(true),
     },
-
     {
       user: users[3]._id,
       products: [
@@ -88,7 +74,6 @@ const generateOrders = () => {
       totalPrice: (1 * products[4].price) + (1 * products[0].price),
       ...generateDates(true),
     },
-
     {
       user: users[4]._id,
       products: [
@@ -101,7 +86,6 @@ const generateOrders = () => {
       totalPrice: 2 * products[3].price,
       ...generateDates(false, true),
     },
-
     {
       user: users[5]._id,
       products: [
@@ -116,18 +100,11 @@ const generateOrders = () => {
       ...generateDates(true),
     },
   ];
-
-
-/*
-Rundar av totalPrice till 2 decimaler
-*/
   orders.forEach(order => {
     order.totalPrice = Number(order.totalPrice.toFixed(2));
   });
-
   return orders;
 };
-
 module.exports = generateOrders();
 
 
