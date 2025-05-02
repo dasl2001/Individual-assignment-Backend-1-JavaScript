@@ -1,7 +1,3 @@
-/*
-Simulerad produktsdata.
-*/
-
 const products = [
     {
       _id: "67ed981187368c7bb51b1b00",
@@ -204,7 +200,6 @@ const products = [
       image: "/images/salmon.jpg",
     },
   ];
-  
   module.exports = products;
   
   
