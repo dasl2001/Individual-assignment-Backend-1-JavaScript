@@ -1,7 +1,3 @@
-/*
-Simulerad användardata.
-*/
-
 const users = [
   {
     _id: "67ed981187368c7bb51b1aa1",
@@ -164,6 +160,5 @@ const users = [
     role: "user",
   },
 ];
-
 module.exports = users;
 
